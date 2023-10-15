@@ -1,2 +1,2 @@
-# customer-management
-Customer Management - Create, Read, Update, Delete, findById and findAll 
+# Customer Management - Create, Read, Update, Delete, findById and findAll 
+### By David King
