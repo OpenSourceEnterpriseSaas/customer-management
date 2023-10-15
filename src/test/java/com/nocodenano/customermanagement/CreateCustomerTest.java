@@ -1,4 +1,4 @@
-package com.nocodenano.customermanagementboon;
+package com.nocodenano.customermanagement;
 
 import org.junit.jupiter.api.Test;
 

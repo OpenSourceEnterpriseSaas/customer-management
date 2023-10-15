@@ -1,13 +1,13 @@
-package com.nocodenano.customermanagementboon;
+package com.nocodenano.customermanagement;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class CustomerManagementBoonApplication {
+public class CustomerManagementApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(CustomerManagementBoonApplication.class, args);
+        SpringApplication.run(CustomerManagementApplication.class, args);
     }
 
 }

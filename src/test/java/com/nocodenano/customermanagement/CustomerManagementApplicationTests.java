@@ -1,10 +1,10 @@
-package com.nocodenano.customermanagementboon;
+package com.nocodenano.customermanagement;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class CustomerManagementBoonApplicationTests {
+class CustomerManagementApplicationTests {
 
     @Test
     void contextLoads() {

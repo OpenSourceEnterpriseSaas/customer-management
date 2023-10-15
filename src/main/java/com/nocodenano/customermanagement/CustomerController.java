@@ -1,4 +1,4 @@
-package com.nocodenano.customermanagementboon;
+package com.nocodenano.customermanagement;
 
 import jakarta.validation.Valid;
 import org.springframework.http.MediaType;

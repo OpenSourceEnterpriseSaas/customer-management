@@ -1,4 +1,4 @@
-package com.nocodenano.customermanagementboon;
+package com.nocodenano.customermanagement;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;

@@ -1,4 +1,4 @@
-package com.nocodenano.customermanagementboon;
+package com.nocodenano.customermanagement;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
