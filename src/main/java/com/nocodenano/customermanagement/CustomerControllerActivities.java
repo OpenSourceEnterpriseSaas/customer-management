@@ -19,7 +19,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class CustomerControllerActivities
     implements CustomerActivities {
 
-    private ObjectMapper mapper;
+    private final ObjectMapper mapper;
     Map<UUID, Customer> database;
 
     public CustomerControllerActivities(final ObjectMapper mapper) {
