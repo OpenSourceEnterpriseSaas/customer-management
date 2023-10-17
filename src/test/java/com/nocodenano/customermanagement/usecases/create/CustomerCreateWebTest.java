@@ -1,6 +1,9 @@
-package com.nocodenano.customermanagement;
+package com.nocodenano.customermanagement.usecases.create;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.nocodenano.customermanagement.Customer;
+import com.nocodenano.customermanagement.CustomerControllerActivities;
+import com.nocodenano.customermanagement.MockCustomerData;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,8 +18,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith(SpringExtension.class)
-@WebMvcTest(controllers = CustomerController.class)
-public class CreateNewCustomerUseCaseTest {
+@WebMvcTest(controllers = CustomerControllerActivities.class)
+public class CustomerCreateWebTest {
     @Autowired
     private MockMvc mockMvc;
 

@@ -1,5 +1,7 @@
-package com.nocodenano.customermanagement;
+package com.nocodenano.customermanagement.usecases.create;
 
+import com.nocodenano.customermanagement.Customer;
+import com.nocodenano.customermanagement.MockCustomerData;
 import org.junit.jupiter.api.Test;
 
 import java.util.UUID;
