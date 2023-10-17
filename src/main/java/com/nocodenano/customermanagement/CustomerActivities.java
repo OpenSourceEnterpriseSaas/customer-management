@@ -1,7 +1,6 @@
 package com.nocodenano.customermanagement;
 
-import java.util.Iterator;
-import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 public interface CustomerActivities {
@@ -9,8 +8,8 @@ public interface CustomerActivities {
     String updateFirstname(UUID customerId, UpdateFirstNameCustomer updateFirstNameCustomer);
     String updateLastname(UUID customerId, UpdateLastNameCustomer updateLastNameCustomer);
     String changeEmailAddress(UUID customerId, UpdateEmailCustomer updateEmailCustomer);
-    void delete(UUID customerId);
-    Optional<Customer> findById(Customer customer);
-    Iterator<Customer> findAll(Customer customer);
+    String delete(UUID customerId);
+    String findById(UUID customerId);
+    Set<Customer> findAll();
 
 }

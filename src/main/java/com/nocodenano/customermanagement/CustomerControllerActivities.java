@@ -8,11 +8,11 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Iterator;
 import java.util.Map;
-import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 @RestController
 @Slf4j
@@ -80,7 +80,7 @@ public class CustomerControllerActivities
         // business invariants:
         // 1) customer firstname should not already exist for this customer
         if (existingCustomer.lastName().equalsIgnoreCase(updateLastNameCustomer.lastName())) {
-            log.debug("updateFirstname, customer with last name already exists not updating.");
+            log.debug("updateLastname, customer with last name already exists not updating.");
             return createWebResponse(HttpStatusCode.valueOf(400), null, "Customer last name updated.");
         }
 
@@ -130,18 +130,31 @@ public class CustomerControllerActivities
 
     @Override
     @DeleteMapping(value = "/customers/{customerId}")
-    public void delete(@PathVariable("customerId") UUID customerId) {
-        //
+    public String delete(@PathVariable("customerId") UUID customerId) {
+        Customer existingCustomer = this.database.get(customerId);
+        if (null == existingCustomer) {
+            log.debug("delete, customer not found for id " + customerId);
+            log.debug("cache: " + this.database);
+            return ResponseEntity.notFound().build().toString();
+        }
+
+        this.database.remove(existingCustomer);
+        return createWebResponse(HttpStatusCode.valueOf(204), null, "Customer DELETED.");
     }
 
     @Override
-    public Optional<Customer> findById(Customer customer) {
-        return Optional.empty();
+    @GetMapping(value = "/customers/{customerId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public String findById(@PathVariable("customerId") UUID customerId) {
+        return this.database.get(customerId) != null ?
+                this.database.get(customerId).toString() :
+                ResponseEntity.notFound().build().toString();
     }
 
     @Override
-    public Iterator<Customer> findAll(Customer customer) {
-        return null;
+    @GetMapping(value = "/customers", produces = MediaType.APPLICATION_JSON_VALUE)
+    public Set<Customer> findAll() {
+        if (this.database.values().isEmpty()) throw new RuntimeException("No customers found.");
+        return this.database.values().stream().collect(Collectors.toUnmodifiableSet());
     }
 
 
