@@ -22,6 +22,14 @@ gradle wrapper
 # Create Customer, HTTP Post
 # http://localhost:8080/customers
 
+# JSON
+{
+    "uuid": "21b1c993-e48f-4962-92b4-78a65535ad36",
+    "firstName": "David",
+    "lastName": "King",
+    "email": "davidking@code.net"
+}
+
 # Find All, HTTP GET
 # http://localhost:8080/customers
 
