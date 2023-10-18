@@ -3,14 +3,13 @@ package com.nocodenano.customermanagement;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
@@ -20,16 +19,44 @@ public class CustomerControllerActivities
     implements CustomerActivities {
 
     private final ObjectMapper mapper;
-    Map<UUID, Customer> database;
+    private final Map<UUID, Customer> database;
+
+    @Value("${customer.identifier.required}")
+    private String customerIdentifierReqMessage;
+    @Value("${customer.type.required}")
+    private String customerTypeReqMessage;
+    @Value("${customer.type.required-for-inmem-db}")
+    private String customerTypeReqInMemMessage;
+    @Value("${customer.identifier.required-for-inmem-db}")
+    private String customerIdentifierReqInMemMessage;
 
     public CustomerControllerActivities(final ObjectMapper mapper) {
         this.database = new ConcurrentHashMap<>();
         this.mapper = mapper;
     }
 
+    private void updateMemDatabase(final UUID key, final Customer customer) {
+        Objects.requireNonNull(key, customerIdentifierReqInMemMessage);
+        Objects.requireNonNull(customer, customerTypeReqInMemMessage);
+        try {
+            this.database.replace(key, customer);
+        } catch (final Exception e) {
+            log.debug("updateMemDatabase FAILED for: {}", key);
+        }
+    }
+
+    private void assertCustomerIdentifierProvided(final UUID customerIdentifier) {
+        Objects.requireNonNull(customerIdentifier, customerIdentifierReqMessage);
+    }
+
+    private void assertCustomerProvided(final Customer customer) {
+        Objects.requireNonNull(customer, customerTypeReqMessage);
+    }
+
     @Override
     @PostMapping(value = "/customers", produces = MediaType.APPLICATION_JSON_VALUE)
     public UUID create(@Valid @RequestBody final Customer customer) {
+        assertCustomerProvided(customer);
         this.database.put(customer.uuid(), customer);
         return customer.uuid();
     }
@@ -38,6 +65,9 @@ public class CustomerControllerActivities
     @PutMapping(value = "/customers/{customerId}/firstname", produces = MediaType.APPLICATION_JSON_VALUE)
     public String updateFirstname(@PathVariable("customerId") UUID customerId,
                                   @Valid @RequestBody final UpdateFirstNameCustomer updateFirstNameCustomer) {
+        Objects.requireNonNull(customerId, customerIdentifierReqMessage);
+        Objects.requireNonNull(updateFirstNameCustomer, customerTypeReqMessage);
+
         Customer existingCustomer = this.database.get(customerId);
         if (null == existingCustomer) {
             log.debug("updateFirstname, customer not found for id " + customerId);
@@ -61,6 +91,8 @@ public class CustomerControllerActivities
                 existingCustomer.email()
         );
 
+        updateMemDatabase(existingCustomer.uuid(), toUpdate);
+
         // result
         return createWebResponse(HttpStatusCode.valueOf(200), toUpdate, "Customer first name updated.");
     }
@@ -70,6 +102,9 @@ public class CustomerControllerActivities
     @PutMapping(value = "/customers/{customerId}/lastname", produces = MediaType.APPLICATION_JSON_VALUE)
     public String updateLastname(@PathVariable("customerId") UUID customerId,
                                  @Valid @RequestBody final UpdateLastNameCustomer updateLastNameCustomer) {
+        Objects.requireNonNull(customerId, customerIdentifierReqMessage);
+        Objects.requireNonNull(updateLastNameCustomer, customerTypeReqMessage);
+
         Customer existingCustomer = this.database.get(customerId);
         if (null == existingCustomer) {
             log.debug("updateLastname, customer not found for id " + customerId);
@@ -93,6 +128,8 @@ public class CustomerControllerActivities
                 existingCustomer.email()
         );
 
+        updateMemDatabase(existingCustomer.uuid(), toUpdate);
+
         // result
         return createWebResponse(HttpStatusCode.valueOf(200), toUpdate, "Customer last name updated.");
     }
@@ -101,6 +138,9 @@ public class CustomerControllerActivities
     @PutMapping(value = "/customers/{customerId}/email", produces = MediaType.APPLICATION_JSON_VALUE)
     public String changeEmailAddress(@PathVariable("customerId") UUID customerId,
                                      @Valid @RequestBody final UpdateEmailCustomer updateEmailCustomer) {
+        Objects.requireNonNull(customerId, customerIdentifierReqMessage);
+        Objects.requireNonNull(updateEmailCustomer, customerTypeReqMessage);
+
         Customer existingCustomer = this.database.get(customerId);
         if (null == existingCustomer) {
             log.debug("changeEmailAddress, customer not found for id " + customerId);
@@ -115,7 +155,6 @@ public class CustomerControllerActivities
             return createWebResponse(HttpStatusCode.valueOf(400), null, "Customer EMAIL updated.");
         }
 
-
         // update the first name
         Customer toUpdate = new Customer(
                 existingCustomer.uuid(),
@@ -124,6 +163,8 @@ public class CustomerControllerActivities
                 updateEmailCustomer.email()
         );
 
+        updateMemDatabase(existingCustomer.uuid(), toUpdate);
+
         // result
         return createWebResponse(HttpStatusCode.valueOf(200), toUpdate, "Customer EMAIL updated.");
     }
@@ -131,6 +172,8 @@ public class CustomerControllerActivities
     @Override
     @DeleteMapping(value = "/customers/{customerId}")
     public String delete(@PathVariable("customerId") UUID customerId) {
+        Objects.requireNonNull(customerId, customerIdentifierReqMessage);
+
         Customer existingCustomer = this.database.get(customerId);
         if (null == existingCustomer) {
             log.debug("delete, customer not found for id " + customerId);
@@ -145,6 +188,8 @@ public class CustomerControllerActivities
     @Override
     @GetMapping(value = "/customers/{customerId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public String findById(@PathVariable("customerId") UUID customerId) {
+        Objects.requireNonNull(customerId, customerIdentifierReqMessage);
+
         return this.database.get(customerId) != null ?
                 this.database.get(customerId).toString() :
                 ResponseEntity.notFound().build().toString();
@@ -153,7 +198,11 @@ public class CustomerControllerActivities
     @Override
     @GetMapping(value = "/customers", produces = MediaType.APPLICATION_JSON_VALUE)
     public Set<Customer> findAll() {
-        if (this.database.values().isEmpty()) throw new RuntimeException("No customers found.");
+        if (this.database.values().isEmpty()) {
+            log.debug("No customers found.");
+            return new HashSet<>();
+        }
+
         return this.database.values().stream().collect(Collectors.toUnmodifiableSet());
     }
 
