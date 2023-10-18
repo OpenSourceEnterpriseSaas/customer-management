@@ -45,10 +45,6 @@ public class CustomerControllerActivities
         }
     }
 
-    private void assertCustomerIdentifierProvided(final UUID customerIdentifier) {
-        Objects.requireNonNull(customerIdentifier, customerIdentifierReqMessage);
-    }
-
     private void assertCustomerProvided(final Customer customer) {
         Objects.requireNonNull(customer, customerTypeReqMessage);
     }
@@ -181,7 +177,7 @@ public class CustomerControllerActivities
             return ResponseEntity.notFound().build().toString();
         }
 
-        this.database.remove(existingCustomer);
+        this.database.remove(existingCustomer.uuid());
         return createWebResponse(HttpStatusCode.valueOf(204), null, "Customer DELETED.");
     }
 
