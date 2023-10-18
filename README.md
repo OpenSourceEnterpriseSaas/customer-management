@@ -33,14 +33,31 @@ gradle wrapper
 # Find All, HTTP GET
 # http://localhost:8080/customers
 
+# NOTE: All updates require an existing customer with it's UUID or customerId, create then update.
+
 # Update lastname, HTTP PUT
 # http://localhost:8080/customers/{customerId}/lastname
+
+{
+    "uuid": "21b1c993-e48f-4962-92b4-78a65535ad36",
+    "lastName": "King"
+}
 
 # Update firstname, HTTP PUT
 # http://localhost:8080/customers/{customerId}/firstname
 
+{
+    "uuid": "21b1c993-e48f-4962-92b4-78a65535ad36",
+    "firstName": "David"
+}
+
 # Update email, HTTP PUT
 # http://localhost:8080/customers/{customerId}/email
+
+{
+    "uuid": "21b1c993-e48f-4962-92b4-78a65535ad36",
+    "email": "davidking@code.net"
+}
 
 # Delete Customer, HTTP PUT
 # http://localhost:8080/customers/{customerId}
